@@ -165,3 +165,6 @@ i {
 .card-footer{
     background-color: #fff;
 }
+.completed {
+    text-decoration: line-through;
+  }

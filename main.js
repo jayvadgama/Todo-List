@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const priorityOrder = ['veryhigh', 'high', 'medium', 'low'];
       return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
     });
+    
   
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = ''; // Clear existing list
@@ -72,14 +73,15 @@ document.addEventListener("DOMContentLoaded", function () {
       listItem.className = 'list-group-item';
       listItem.dataset.taskId = task.taskId;
       
+      
       listItem.innerHTML = `
         <div class="todo-indicator"></div>
         <div class="widget-content p-0">
           <div class="widget-content-wrapper">
             <div class="widget-content-left mr-2">
               <div class="custom-checkbox custom-control">
-                <input class="custom-control-input" id="checkbox-${task.id}" type="checkbox">
-                <label class="custom-control-label" for="checkbox-${task.id}">&nbsp;</label>
+                <input class="custom-control-input" id="checkbox-${task.taskId}" type="checkbox">
+                <label class="custom-control-label" for="checkbox-${task.taskId}">&nbsp;</label>
               </div>
             </div>
             <div class="widget-content-left">
@@ -94,10 +96,13 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
         </div>
       `;
+      if (task.completed) {
+        listItem.style.textDecoration = 'line-through';
+      }
 
       const deleteButton = document.createElement('button');
       deleteButton.className = 'border-0 btn-transition btn btn-outline-danger delete-task';
-      deleteButton.dataset.taskId = task.id; // Set the task ID as a data attribute
+      deleteButton.dataset.taskId = task.taskId; // Set the task ID as a data attribute
       deleteButton.innerHTML = '<i class="fa fa-trash"></i>';
       listItem.querySelector('.widget-content-right').appendChild(deleteButton);
 
@@ -114,10 +119,39 @@ document.addEventListener("DOMContentLoaded", function () {
       }
   
       taskList.appendChild(listItem);
+      const checkButton = listItem.querySelector('.btn-outline-success');
+      checkButton.addEventListener('click', () => toggleTaskCompleted(task.taskId));
     });
+    function toggleTaskCompleted(taskId) {
+      fetchAndUpdateTask(taskId);
+    }
   }
+
+
+
+  async function fetchAndUpdateTask(taskId) {
+    try {
+      const response = await fetch(`http://localhost:3001/api/tasks/${taskId}/completed`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: true }), // Mark task as completed
+      });
   
-// ... Your existing code ...
+      if (response.ok) {
+        // Fetch and populate tasks again to update the list
+        fetchAndPopulateTasks();
+      } else {
+        console.error('Error updating task:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  }
+
+
+
 
 // Inside the fetchAndPopulateTasks function
 async function fetchAndPopulateTasks() {

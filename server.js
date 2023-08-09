@@ -53,3 +53,23 @@ app.delete('/api/tasks/:taskId', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.put('/api/tasks/:taskId/completed', (req, res) => {
+  const taskId = req.params.taskId;
+  const task = tasks.find(task => task.taskId === taskId);
+
+  if (!task) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+
+  task.completed = true;
+
+  fs.writeFile('tasks.json', JSON.stringify(tasks), 'utf8', err => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    return res.status(200).json({ message: 'Task marked as completed' });
+  });
+});

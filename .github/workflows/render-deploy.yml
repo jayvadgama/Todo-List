@@ -1,0 +1,32 @@
+# Script to deploy on the Render cloud platform
+# Pipeline that deploys to the Render cloud platform
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        env: 
+          webhook_url: "https://api.render.com/deploy/srv-cj9tdrivvtos738qht60?key=QlyOpPK7L_s"
+          webhook secrets: "QlyOpPK7L_s"
+
+        with:
+          render-token: ${{secrets.RENDER_API_KEY}}
+          github-token: ${{secrets.ACC_API_KEY}} # This is the GitHub token
+          service-id: "srv-cj9tdrivvtos738qht60" # This id is unique for each app
+          retries: 20
+          wait: 16000
+          sleep: 30000
+          

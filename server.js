@@ -1,12 +1,24 @@
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
+const bodyParser = require('body-parser');
+const path = require('path'); // Import the path module
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// Set up handlebars as the view engine
+app.set('view engine', 'hbs');
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes 
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', (req, res) => res.render('index'));
 // Load existing tasks from JSON file
 let tasks = [];
 fs.readFile('tasks.json', 'utf8', (err, data) => {
@@ -50,6 +62,7 @@ app.delete('/api/tasks/:taskId', (req, res) => {
   });
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

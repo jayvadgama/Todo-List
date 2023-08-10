@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fetchAndPopulateTasks();
   addTaskButton.addEventListener("click", function () {
-    console.log("hmm");
     modal.style.display = "block";
   });
 
@@ -45,8 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       await addTask(newTask);
+      location.reload()
       // Refresh the task list or do any necessary updates
       console.log('Task added successfully.');
+      
+      fetchAndPopulateTasks();
       closeModal();
     } catch (error) {
       console.error('Error adding task:', error);

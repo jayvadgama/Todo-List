@@ -49,9 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Refresh the task list or do any necessary updates
       console.log('Task added successfully.');
       
-      fetchAndPopulateTasks();
       $(modal).modal("hide");
-      closeModal();
     } catch (error) {
       console.error('Error adding task:', error);
     }

@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to close the modal
   function closeModal() {
     modal.style.display = "none";
+  modalContainer.style.display = "none";
   }
 
   // Add a click event listener to the close button
@@ -44,11 +45,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       await addTask(newTask);
-      location.reload()
+      fetchAndPopulateTasks();
       // Refresh the task list or do any necessary updates
       console.log('Task added successfully.');
       
       fetchAndPopulateTasks();
+      $(modal).modal("hide");
       closeModal();
     } catch (error) {
       console.error('Error adding task:', error);
